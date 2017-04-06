@@ -1,13 +1,12 @@
 
 # coding: utf-8
 
-# In[116]:
+# In[148]:
 
 from matplotlib.pyplot import plot, show
 import numpy as np
-# from numpy import vstack,array
 from numpy.random import rand, random, uniform
-from scipy.cluster.vq import kmeans,vq
+from sklearn import cluster
 
 
 # In[133]:
@@ -59,8 +58,9 @@ show()
 data = np.concatenate((first_circle, second_circle))
 
 
-# In[143]:
+# In[144]:
 
+# K-means
 # computing K-Means with K = 2 (2 clusters)
 centroids,_ = kmeans(data,2)
 # assign each sample to a cluster
@@ -70,5 +70,28 @@ idx,_ = vq(data,centroids)
 plot(data[idx==0,0],data[idx==0,1],'ob',
      data[idx==1,0],data[idx==1,1],'or')
 plot(centroids[:,0],centroids[:,1],'sg',markersize=8)
+show()
+
+
+# In[156]:
+
+# Spectral clustering
+
+spectral = cluster.SpectralClustering(n_clusters=2,
+                                      eigen_solver='arpack',
+                                      affinity="nearest_neighbors")
+
+spectral.fit(data)
+
+y_preds = spectral.labels_.astype(np.int)
+
+for index, y_pred in enumerate(y_preds):
+    if y_pred == 0:
+        plot_option = 'ob'
+    else:
+        plot_option = 'or'
+    
+    plot(data[index][0], data[index][1], plot_option)
+
 show()
 
